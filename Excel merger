@@ -22,8 +22,8 @@ if __name__ == "__main__":
         time.sleep(300)
         exit()
 
-    #pd_file = r'C:\Users\sonikar\Documents\Scheme Formulation\Process_automation_output\PG_trend_analysis\PD_output_pivot2023 Oct20231112_200645.xlsx'
-    #hgpd_file = r'C:\Users\sonikar\Documents\Scheme Formulation\Process_automation_output\PG_trend_analysis\HGPD_output_pivot2023 Oct20231112_200714.xlsx'
+    # pd_file = r'C:\Users\sonikar\Documents\S"C:\Users\sonikar\Documents\Scheme Formulation\Process_automation_output\PG_trend_analysis\HGPD_output_pivot2023 Oct20231112_200714.xlsx"cheme Formulation\Process_automation_output\PG_trend_analysis\PD_output_pivot2023 Oct20231112_200645.xlsx'
+    # hgpd_file = r'C:\Users\sonikar\Documents\Scheme Formulation\Process_automation_output\PG_trend_analysis\HGPD_output_pivot2023 Oct20231112_200714.xlsx'
 
     pd_sheet = pd.read_excel(pd_file, engine="openpyxl", usecols="A,B,C,D,E,F")
     hgpd_sheet = pd.read_excel(hgpd_file, engine="openpyxl", usecols="A,B,C,D,E")
@@ -44,5 +44,8 @@ if __name__ == "__main__":
 
     #merged_data.drop([col for col in merged_data.columns if 'drop' in col], axis=1, inplace=True)
     merged_data = merged_data[merged_data.Type != 'Counter']
-    merged_data.to_excel(r'C:\Users\sonikar\Documents\Scheme Formulation\Process_automation_output\PG_trend_analysis\PD_HDPD_Merged_Output.xlsx',index=False)
+    month_name= merged_data.columns[-1][0:8]
+    file_name = r'C:\Users\sonikar\Documents\Scheme Formulation\Process_automation_output\PG_trend_analysis\PD_HDPD_Merged_Output '+ month_name + '.xlsx'
+    merged_data.to_excel(file_name,index=False)
     print("Total Time taken in secods is : ", time.time()- s1)
+    print('output file is: ',file_name)
