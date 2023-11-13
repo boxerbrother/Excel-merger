@@ -1,0 +1,48 @@
+import time
+import pandas as pd
+import os
+
+if __name__ == "__main__":
+    s1 = time.time()
+    print("#######################################################")
+    print(" ######### Merge PD + HGPD Excel to On File ##########")
+    print("#######################################################\n\n")
+    
+    hgpd_file = input("Enter HGPD file name along with path: ")
+    #Check if the input file exists or not, if file doesn't exists in the provided path then exit
+    if not (os.path.isfile(hgpd_file)):
+        print("The entered HGPD file doesn't exists. Please re-run with correct file.")
+        time.sleep(300)
+        exit()
+
+    pd_file = input("Enter PD file name along with path: ")
+    #Check if the input file exists or not, if file doesn't exists in the provided path then exit
+    if not (os.path.isfile(pd_file)):
+        print("The entered PD file doesn't exists. Please re-run with correct file.")
+        time.sleep(300)
+        exit()
+
+    #pd_file = r'C:\Users\sonikar\Documents\Scheme Formulation\Process_automation_output\PG_trend_analysis\PD_output_pivot2023 Oct20231112_200645.xlsx'
+    #hgpd_file = r'C:\Users\sonikar\Documents\Scheme Formulation\Process_automation_output\PG_trend_analysis\HGPD_output_pivot2023 Oct20231112_200714.xlsx'
+
+    pd_sheet = pd.read_excel(pd_file, engine="openpyxl", usecols="A,B,C,D,E,F")
+    hgpd_sheet = pd.read_excel(hgpd_file, engine="openpyxl", usecols="A,B,C,D,E")
+ 
+    #Vlookup on 'Part Number' and whereever 'Part Number' matches append 'PG' & 'OldNew' columns for that row
+    merged_data = pd.merge( pd_sheet, hgpd_sheet, on=['Part Number','PG','OldNew'] ,how='outer',suffixes=('1', '2'))
+ 
+    pd_qty_col = merged_data.columns[4]
+    hgpd_qty_col = merged_data.columns[6]
+     
+    pd_val_col = merged_data.columns[5]
+    hgpd_val_col = merged_data.columns[7]
+ 
+    merged_data[pd_qty_col[:-1]] = merged_data[pd_qty_col] + merged_data[hgpd_qty_col]
+    merged_data[pd_val_col[:-1]] = merged_data[pd_val_col] + merged_data[hgpd_val_col]
+
+    merged_data = merged_data.drop([pd_qty_col,hgpd_qty_col,pd_val_col,hgpd_val_col], axis=1)
+
+    #merged_data.drop([col for col in merged_data.columns if 'drop' in col], axis=1, inplace=True)
+    merged_data = merged_data[merged_data.Type != 'Counter']
+    merged_data.to_excel(r'C:\Users\sonikar\Documents\Scheme Formulation\Process_automation_output\PG_trend_analysis\PD_HDPD_Merged_Output.xlsx',index=False)
+    print("Total Time taken in secods is : ", time.time()- s1)
